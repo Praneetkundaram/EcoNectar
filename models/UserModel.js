@@ -9,6 +9,14 @@ const userSchema = mongoose.Schema(
         email:{
             type:String,
             required:true
+        },
+        totalDonations:{
+            type:Number,
+            default:0
+        },
+        totalEarned:{
+            type:Number,
+            default:0
         }
     },
     {

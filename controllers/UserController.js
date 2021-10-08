@@ -37,6 +37,8 @@ const LoginControl = async (req, res) => {
                     _id: FoundUser._id,
                     name: FoundUser.name,
                     email: FoundUser.email,
+                    totalDonations:FoundUser.totalDonations,
+                    totalEarned:FoundUser.totalEarned,
                     createdAt: FoundUser.createdAt,
                     updatedAt: FoundUser.updatedAt
                 }]
@@ -62,6 +64,8 @@ const LoginControl = async (req, res) => {
                     _id: InsertUser._id,
                     name: InsertUser.name,
                     email: InsertUser.email,
+                    totalDonations:InsertUser.totalDonations,
+                    totalEarned:InsertUser.totalEarned,
                     createdAt: InsertUser.createdAt,
                     updatedAt: InsertUser.updatedAt
                 }]
