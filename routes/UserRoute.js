@@ -1,6 +1,13 @@
 const express = require("express");
-const { test, LoginControl } = require("../controllers/UserController");
+const { LoginControl, GetUserDetails } = require("../controllers/UserController");
 const router = express.Router();
+
+
 router.post("/login",LoginControl)
-router.get("/:id",test)
+
+
+router.use(require("../middlewares/AuthUser"));
+router.get("/", GetUserDetails);
+
+
 module.exports = router;

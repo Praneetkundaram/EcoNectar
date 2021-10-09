@@ -3,12 +3,6 @@ const User = require('../models/UserModel')
 require("dotenv").config();
 
 
-
-const test = (req, res) => {
-    console.log(req)
-    res.send('Response form controller')
-}
-
 const LoginControl = async (req, res) => {
 
     try {
@@ -83,7 +77,23 @@ const LoginControl = async (req, res) => {
     }
 }
 
+
+const GetUserDetails = async (req, res) => {
+    try{
+        const {_id} = req.user;
+        const userData = await User.findOne({_id});
+        res.status(200).json(userData)
+    }catch (e) {
+        console.log(e)
+        res.status(500).json({
+            msg: "Something Went Wrong",
+            data: []
+        })
+    }
+}
+
+
 module.exports = {
-    test,
-    LoginControl
+    LoginControl,
+    GetUserDetails
 }
