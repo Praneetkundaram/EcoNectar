@@ -12,7 +12,7 @@ const userDonationSchema = mongoose.Schema(
             type:String,
             require:true
         },
-        item_descrption:
+        item_description:
         {
             type:String
         },
