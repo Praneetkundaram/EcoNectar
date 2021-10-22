@@ -97,7 +97,9 @@ const GetUserDetails = async (req, res) => {
 
 const AddDonation = async (req, res) => {
     try {
+        console.log(req.files)
         const {
+
             _id
         }=req.user
         const {
