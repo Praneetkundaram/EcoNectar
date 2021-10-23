@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/UserModel')
 require("dotenv").config();
 
-const path=require("path");
+const path = require("path");
 const { uploadFile } = require('../utils/RemoteFileUpload');
 const Donation = require('../models/UserDonationModel');
 
@@ -102,7 +102,7 @@ const AddDonation = async (req, res) => {
         const {
 
             _id
-        }=req.user
+        } = req.user
         const {
             user_address,
             item_name,
@@ -111,14 +111,14 @@ const AddDonation = async (req, res) => {
             item_totalnumber,
             item_pricegenerated,
             item_pricecategory,
-            
-        }=req.body
+
+        } = req.body
 
         const destination = `DonatedImages/${req.files.item_image[0].filename}`
-        const filePath=path.join(__dirname,`../Localstorage/${req.files.item_image[0].filename}`)
-        await uploadFile(filePath,destination)
+        const filePath = path.join(__dirname, `../Localstorage/${req.files.item_image[0].filename}`)
+        await uploadFile(filePath, destination)
 
-        const createDonation=new Donation({
+        const createDonation = new Donation({
             user_address,
             item_name,
             item_description,
@@ -126,26 +126,80 @@ const AddDonation = async (req, res) => {
             item_totalnumber,
             item_pricegenerated,
             item_pricecategory,
-            item_image:destination,
-            user_id:_id,
-          
+            item_image: destination,
+            user_id: _id,
+
 
         })
-        const insertDonation= await createDonation.save()
-        res.status(200).json({msg:"Donated Succesfully",data:insertDonation})
+        const insertDonation = await createDonation.save()
+        res.status(200).json({ msg: "Donated Succesfully", data: insertDonation })
         // console.log(filePath)
         // res.send("Sahi chal raha hai ")
 
     } catch (e) {
         console.log(e)
         res.status(500).json({
-            msg:"Something Went Wrong"
-        }) 
+            msg: "Something Went Wrong"
+        })
     }
 }
 
+
+const ConfirmDonation = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const foundDonation = await Donation.findOne({_id:id})
+        if(foundDonation){
+            foundDonation.progress = "completed"
+            const updatedDonation = await foundDonation.save()
+            const userId = foundDonation.user_id;
+            const foundUser = await User.findOne({_id:userId})
+            foundUser.totalDonations = foundUser.totalDonations + 1;
+            foundUser.totalEarned = foundUser.totalEarned + foundDonation.item_pricegenerated;
+            const updatedUser = await foundUser.save();
+
+            res.status(200).json({
+                msg:"Set order completed",
+                user:updatedUser,
+                donation:updatedDonation
+            })
+        }
+        else{
+            res.status(404).json({
+                msg:"no donation found with given id"
+            })
+        }
+    }
+    catch (e) {
+        console.log(e)
+        res.status(500).json({
+            msg: "Something went wrong"
+        })
+
+    }
+}
+
+const getUserDonations = async (req, res) => {
+    try{
+        const {_id} = req.user;
+        const foundDonations = await Donation.find({user_id:_id}).sort({_id:-1});
+        res.status(200).json({
+            msg:"Found donations",
+            data:foundDonations
+        })
+    }
+    catch(e){
+        console.log(e)
+        res.status(500).json({
+            msg:"Something went wrong"
+        })
+
+    }
+}
 module.exports = {
     LoginControl,
     GetUserDetails,
-    AddDonation
+    AddDonation,
+    ConfirmDonation,
+    getUserDonations
 }
